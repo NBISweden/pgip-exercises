@@ -7,3 +7,4 @@ all:
 
 clean:
 	rm -fR _build
+	@find . -name "*undo-tree*" -exec rm -f {} \;
