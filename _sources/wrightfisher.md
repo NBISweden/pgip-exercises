@@ -7,11 +7,11 @@ jupytext:
     jupytext_version: 1.13.8
 kernelspec:
   display_name: Python 3
-  language: python
-  name: pgip
+  language: ipython3
+  name: python3
 ---
 
-(sec_demographic_inference)=
+(sec_wrightfisher)=
 
-# Demographic inference
+# Wright-Fisher model
 
