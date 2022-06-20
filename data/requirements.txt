@@ -1,0 +1,7 @@
+cyvcf2
+joblib
+insilicoseq
+biopython=1.78
+bwa
+samtools
+gatk4
