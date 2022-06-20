@@ -11,8 +11,10 @@ dependencies:
   - ipykernel
   - bash_kernel
   - jupyter-book>=0.13.0
+  - jupytext==1.13.8
   - matplotlib
   - msprime>=1.0
+  - myst==0.13.2
   - networkx
   - numpy
   - pip
