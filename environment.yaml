@@ -10,7 +10,7 @@ dependencies:
   - gatk4
   - ipykernel
   - bash_kernel
-  - jupyter-book
+  - jupyter-book>=0.13.0
   - matplotlib
   - msprime>=1.0
   - networkx

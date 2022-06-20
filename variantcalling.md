@@ -32,15 +32,17 @@ populations:
 
 ## Variant calling exercise
 
-```{tabbed} bcftools
+````{tab-set-code}
+
 ```{code-block} shell
 bcftools | head -2
 ```
 
-```{tabbed} gatk
 ```{code-block} shell
 gatk HaplotypeCaller
 ```
+
+````
 
 Optional: run bcftools / HaplotypeCaller / freebayes on data set or at
 least show commands how files were generated

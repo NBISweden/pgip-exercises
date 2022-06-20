@@ -24,15 +24,20 @@ bind 'set enable-bracketed-paste off'
 
 # Exercises #
 
-```{tabbed} Dsuite
+````{tab-set-code}
+
+
 ```{code-block} shell
+:name: Dsuite
 pwd
 ```
 
-```{tabbed} sgkit
 ```{code-block} ipython3
+:name: sgkit
 import sgkit
 ```
+
+````
 
 ```{code-cell} bash
 pwd
