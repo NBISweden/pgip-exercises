@@ -11,14 +11,20 @@ kernelspec:
   name: bash
 ---
 
+```{code-cell} bash
+:"tags": ["remove-output", "remove-input"]
+bind 'set enable-bracketed-paste off'
+```
+
+
+
 (sec_nucleotide_diversity)=
 
 # Nucleotide diversity
 The nucleotide diversity is defined as the average number of pairwise
 differences per site for a number of sequences
 {cite}`nei_MolecularEvolutionPhylogenetics_2000`, p. 251:
-[@chan_GenomeWideFineScaleRecombination_2012]
-{cite}`chan_GenomeWideFineScaleRecombination_2012`
+
 $$
  \pi = \sum_{ij} x_i x_j \pi_{ij}
 $$
@@ -68,4 +74,3 @@ Letting $k = \lceil(q+1)/2\rceil$, we can further rewrite $\pi$ as
 $$
  \pi = \sum_{i=1}^{q} p_i i (q-i) = p_k k (q-k) +  \sum_{i=1}^{k - 1} p_i i (q-i) + p_{q-i} (q-i) i = \sum_{i=1}^{k} p^*_i i (k - i)
 $$
- 

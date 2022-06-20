@@ -18,23 +18,30 @@ parts:
   # - caption: Practical information
   #   chapters:
   #   - file: schedule
-- caption: "Day 1: Variant calling"
+
+- caption: "Day 1: Models of evolution"
+  chapters:
+  - file: wrightfisher
+- caption: "Day 2: Variant calling"
   chapters:
   - file: variantcalling
   - file: variantfiltering
   - file: genotype_likelihoods
-- caption: "Day 2: Describing variation"
+- caption: "Day 3: Describing variation"
   chapters:
   - file: describing_variation
   - file: ld_pruning_pca
   - file: admixture
-- caption: "Day 3: Demographic inference"
+- caption: "Day 4: Demographic inference"
   chapters:
   - file: demographic_inference
   - file: fstatistics
-- caption: "Day 4: Selection"
+- caption: "Day 5: Selection"
   chapters:
   - file: selection
+# - caption: "Additional material"
+#   chapters:
+#   - file: nucleotide_diversity
 - caption: About
   chapters:
   - file: data

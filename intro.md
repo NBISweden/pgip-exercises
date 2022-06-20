@@ -11,6 +11,7 @@ kernelspec:
   name: pgip
 ---
 
+
 (sec_intro)=
 
 # Population Genomics in Practice exercises

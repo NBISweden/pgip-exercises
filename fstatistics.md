@@ -13,7 +13,7 @@ kernelspec:
 
 
 ```{code-cell} bash
-:"tags": ["remove-output"]
+:"tags": ["remove-input", "remove-output"]
 bind 'set enable-bracketed-paste off'
 ```
 
