@@ -4,7 +4,6 @@ channels:
   - defaults
 dependencies:
   - bcftools
-  - bokeh
   - demes
   - demesdraw
   - gatk4
@@ -26,3 +25,4 @@ dependencies:
   - sphinx
   - tskit>=0.4
   - tqdm
+  - yarl
