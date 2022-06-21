@@ -21,6 +21,7 @@ dependencies:
   - plink
   - r-irkernel
   - r-reticulate
+  - scikit-learn
   - scikit-allel
   - sphinx
   - tskit>=0.4

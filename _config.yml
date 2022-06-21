@@ -13,7 +13,7 @@ execute:
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/percyfal/pgip-exercises
+  url: https://github.com/NBISweden/pgip-exercises
   branch: main
 
 launch_buttons:
