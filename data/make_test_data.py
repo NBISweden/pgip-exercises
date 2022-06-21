@@ -16,6 +16,12 @@ from random import choices
 import cyvcf2
 import tskit
 
+import logging
+
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(level=logging.INFO, format="%(levelname)s (make_test_data): %(message)s")
+
 
 def _get_metadata(tablerow):
     md_string = tablerow.metadata.decode()
@@ -360,7 +366,7 @@ class DemesModel:
 
         """
         vcf_tmp_fn = tempfile.mkstemp(suffix=".vcf")[1]
-        print(f"Writing ts to vcf {vcf_tmp_fn}")
+        logger.info(f"Writing ts to vcf {vcf_tmp_fn}")
         with open(vcf_tmp_fn, "w") as fh:
             self.ts.write_vcf(fh)
 
@@ -369,7 +375,7 @@ class DemesModel:
             vcf_ref = cyvcf2.VCF(vcf_tmp_fn, samples=self.reference.tskit_id)
 
         vcf_out = self.path / f"{self.name}.vcf.gz"
-        print(f"Writing output vcf {vcf_out}")
+        logger.info(f"Writing output vcf {vcf_out}")
         samples = [ind.tskit_id for ind in self.individuals]
         vcf_tmp = cyvcf2.VCF(vcf_tmp_fn, samples=samples)
         vcfwriter = cyvcf2.cyvcf2.Writer(str(vcf_out), vcf_tmp, "wz")
@@ -402,7 +408,7 @@ class DemesModel:
     # FIXME: dump more than ts?
     def dump(self, **kw):
         path = self.path / f"{self.name}.ts"
-        print("Dumping tree sequences to", str(path))
+        logger.info(f"Dumping tree sequences to {str(path)}")
         self.ts.dump(path, **kw)
 
     def write_haplotypes(self):
@@ -411,8 +417,10 @@ class DemesModel:
             ind.write_haplotypes(path)
 
     def gatk_variant_calling(self, cpus=1, **kw):
+        """Run GATK variant calling"""
+        keep_reference = kw.get("keep_reference", False)
         for ind in self.individuals:
-            if ind.is_reference:
+            if ind.is_reference and not keep_reference:
                 continue
             ind.haplotype_caller(str(self.index), **{'native-pair-hmm-threads': cpus})
         gvcf = str(self.path / f"{self.name}.gatk.g.vcf.gz")
@@ -421,9 +429,12 @@ class DemesModel:
         for ind in self.individuals:
             if not ind.is_reference:
                 gvcflist += ["-V", ind.gvcf]
+            else:
+                if keep_reference:
+                    gvcflist += ["-V", ind.gvcf]
         subprocess.run(args + gvcflist, check=True)
         for ind in self.individuals:
-            if ind.is_reference:
+            if ind.is_reference and not keep_reference:
                 continue
             os.unlink(ind.gvcf)
             idx = f"{ind.gvcf}.idx"
@@ -435,9 +446,45 @@ class DemesModel:
         subprocess.run(["tabix", "-f", vcf], check=True)
 
 
+
 def make_ooa(args):
+    """Make out of Africa model."""
     np.random.seed(52)
-    model = DemesModel(name="ooa", path=pathlib.Path("ooa"), demesfile="ooa/ooa_with_outgroup.demes.yaml")
+    model = DemesModel(name="ooa", path=pathlib.Path("ooa"), demesfile="ooa/ooa.demes.yaml")
+    popdict = {'CHB': 3, 'CEU': 4, 'YRI': 3}
+    model.add_individuals(**popdict)
+    model.set_reference(population="CEU", individual=3)
+    model.simulate(seqlength=5e4, recombination_rate=1e-7, mutation_rate=1e-7)
+    model.dump()
+    model.sync_metadata()
+    model.write_variants()
+    model.make_reference_sequence()
+    model.save_reference()
+    bwa_index(model.index)
+    samtools_faidx(model.index)
+    gatk_create_sequence_dictionary(model.index)
+
+    for ind in model.individuals:
+        logger.info(f"Processing individual  {ind}")
+        ind.make_sequence(model.vcf_ref, model.reference)
+        output = model.path / f"{str(ind)}-0"
+        coverage = np.clip(np.random.normal(10, 2), 5.0, 15.0)
+        if ind.is_reference:
+            coverage = np.clip(np.random.normal(30, 2), 20.0, 40.0)
+        logger.info(f"  simulating reads for {ind}")
+        ind.simulate_reads(model.path, cpus=args.cpus, output=output, coverage=coverage)
+        logger.info(f"  aligning reads for {ind}")
+        ind.align_reads(str(model.index), t=args.cpus)
+
+    model.gatk_variant_calling(cpus=args.cpus, keep_reference=True)
+
+
+
+
+def make_ooa_with_outgroups(args):
+    """Make out of Africa model with outgroups"""
+    np.random.seed(52)
+    model = DemesModel(name="ooa", path=pathlib.Path("ooa-outgroups"), demesfile="ooa-outgroups/ooa_with_outgroup.demes.yaml")
     popdict = {'CHB': 3, 'CEU': 4, 'YRI': 3, 'gorilla': 1,
                'chimpanzee': 1, 'orangutan': 1}
     model.add_individuals(**popdict)
@@ -478,9 +525,15 @@ def main():
     subparsers = parser.add_subparsers(dest="subcommand")
     subparsers.required = True
 
-    ooaparser = subparsers.add_parser("ooa-outgroup", help="Make ooa dataset (neutral)")
-    ooaparser.set_defaults(runner=make_ooa)
-    ooaparser.add_argument(
+    ooa_outgroups_parser = subparsers.add_parser("ooa-outgroup-with-outgroups", help="Make ooa dataset (neutral) with outgroups")
+    ooa_outgroups_parser.set_defaults(runner=make_ooa_with_outgroups)
+    ooa_outgroups_parser.add_argument(
+        "--cpus", "-p", help="Set number of cpus", default=1, dest="cpus"
+    )
+
+    ooa_parser =  subparsers.add_parser("ooa", help="Make ooa dataset (neutral)")
+    ooa_parser.set_defaults(runner=make_ooa)
+    ooa_parser.add_argument(
         "--cpus", "-p", help="Set number of cpus", default=1, dest="cpus"
     )
 
