@@ -27,7 +27,7 @@ output_notebook()
 
 ```{code-cell} pgip
 :"tags": ["hide-input"]
-suprocess.run(["plink"])
+subprocess.run(["plink"])
 ```
 
 

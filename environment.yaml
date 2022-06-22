@@ -20,6 +20,7 @@ dependencies:
   - plink
   - r-irkernel
   - r-reticulate
+  - samtools
   - scikit-learn
   - scikit-allel
   - sphinx
