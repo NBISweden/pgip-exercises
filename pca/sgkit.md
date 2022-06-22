@@ -11,7 +11,16 @@ kernelspec:
   name: pgip
 ---
 
-(sec_sgkit)=
 
-# Sgkit
+```{code-cell} pgip
+:"tags": ["hide-output"]
+from bokeh.plotting import figure, show, output_notebook
+from pgip import utils
+output_notebook()
+```
 
+(sec_pca_with_sgkit)=
+
+# PCA with sgkit
+
+## Data preparation

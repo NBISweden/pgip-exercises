@@ -11,7 +11,23 @@ kernelspec:
   name: pgip
 ---
 
-(sec_plink)=
 
-# Plink
+```{code-cell} pgip
+:"tags": ["hide-output", "hide-input"]
+from bokeh.plotting import figure, show, output_notebook
+from pgip import utils
+import subprocess
+output_notebook()
+```
+
+
+(sec_pca_with_plink)=
+
+# PCA with plink
+
+```{code-cell} pgip
+:"tags": ["hide-input"]
+suprocess.run(["plink"])
+```
+
 

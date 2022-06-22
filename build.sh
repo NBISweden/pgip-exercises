@@ -6,7 +6,7 @@
 
 REPORTDIR=_build/html/reports
 
-jupyter-book build -W -n --keep-going .
+PYTHONPATH=`pwd`:$PYTHONPATH jupyter-book build -W -n --keep-going .
 RETVAL=$?
 if [ $RETVAL -ne 0 ]; then
     if [ -e $REPORTDIR ]; then
