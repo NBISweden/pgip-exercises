@@ -163,7 +163,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Day 3: Describing variation
+  Day 3: Describing variation and population structure
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -172,10 +172,27 @@ const thebe_selector_output = ".output, .cell_output"
    Describing variation
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="ld_pruning_pca.html">
-   Ld pruning and principal component analysis
+   Principal component analysis
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/sgkit.html">
+     PCA with sgkit
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/plink.html">
+     PCA with plink
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="admixture.html">
@@ -505,13 +522,6 @@ title="Print to PDF"
                 
   <section class="tex2jax_ignore mathjax_ignore" id="data">
 <span id="sec-data"></span><h1>Data<a class="headerlink" href="#data" title="Permalink to this headline">#</a></h1>
-<div class="warning admonition">
-<p class="admonition-title">FIXME</p>
-<ul class="simple">
-<li><p>Describe data sets used in course</p></li>
-<li><p>Should make_test_data.py also generate experimental data through downloads?</p></li>
-</ul>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Datasets are presumably of three types:</p>
@@ -523,37 +533,84 @@ title="Print to PDF"
 <p>Datasets 1 and 2 will be used for analyses. Datasets of type 3 are
 results that take a long time to compute (e.g. on a HPC) and will be
 needed to enable compilation of jupyter book examples</p>
+<p>Only small datasets are committed to this repo. In the case we need
+larger datasets, setup an independent data repo.</p>
 </div>
-<p>Data sets reside in the <code class="docutils literal notranslate"><span class="pre">data</span></code> subdirectory. Simulated data sets have
-been generated with the script <code class="docutils literal notranslate"><span class="pre">data/make_test_data.py</span></code>.</p>
+<p>Datasets reside in the <code class="docutils literal notranslate"><span class="pre">data</span></code> subdirectory
+(<a class="reference internal" href="#table-simulated-datasets"><span class="std std-numref">Table 1</span></a>). Simulated datasets have been
+generated with the script <code class="docutils literal notranslate"><span class="pre">data/make_test_data.py</span></code>.</p>
+<table class="table" id="table-simulated-datasets">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Simulated datasets</span><a class="headerlink" href="#table-simulated-datasets" title="Permalink to this table">#</a></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Dataset</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Location</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ooa</p></td>
+<td><p>Out of Africa</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data/ooa</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>ooa-outgroups</p></td>
+<td><p>Out of Africa with outgroups</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">data/ooa-outgroups</span></code></p></td>
+</tr>
+</tbody>
+</table>
 <section id="simulated-data">
 <span id="sec-data-simulated"></span><h2>Simulated data<a class="headerlink" href="#simulated-data" title="Permalink to this headline">#</a></h2>
-<section id="out-of-africa-ooa">
-<span id="sec-data-simulated-ooa"></span><h3>Out of Africa (ooa)<a class="headerlink" href="#out-of-africa-ooa" title="Permalink to this headline">#</a></h3>
+<p>The script <code class="docutils literal notranslate"><span class="pre">data/make_test_data.py</span></code> has subcommands to simulate
+genealogies, mutations, and read data from a demographic model.
+Demographic models are defined using the <a class="reference external" href="https://popsim-consortium.github.io/demes-spec-docs/main/introduction.html">Demes
+specification</a>.
+For neutral models, genealogies and mutations are <a class="reference external" href="https://tskit.dev/msprime/docs/stable/ancestry.html">simulated with
+msprime</a> and
+saved as <a class="reference external" href="https://tskit.dev/learn.html#what">succinct tree sequences</a>
+that can be converted to standard variant call format (vcf) files.</p>
+<p>The variant data represents the true state of the model. In addition,
+we can assign haplotypes to each individual from which sequence reads
+can be simulated. One simulated individual is chosen as reference and
+a reference sequence is generated, either from experimental data or
+randomly, for that individual. Given the reference and the variant
+data, haplotype sequences are generated for each individual in the
+model. The haplotype sequences are then used as templates to generate
+sequencing reads with realistic error profiles. Currently
+<a class="reference external" href="https://insilicoseq.readthedocs.io/en/latest/index.html">insilicoseq</a>
+is used to simulate reads.</p>
+<p>Simulated reads are mapped with bwa to the reference and saved to bam
+files. The raw data reads and haplotype sequences are finally
+discarded to save space. Variant calling is done with GATK.</p>
 <div class="warning admonition">
 <p class="admonition-title">FIXME</p>
-<p>Simulate and add out of Africa dataset without outgroups. Can be simulated with stdpopsim.</p>
+<p>Desired improvements:</p>
+<ul class="simple">
+<li><p>current datasets are based on randomly generated sequences. There
+is now a subcommand to download ucsc data from hg38 that would
+better represent GC content, repeats etc</p></li>
+<li><p>base mutations are random; model realistic ti/tv ratios better</p></li>
+</ul>
 </div>
+<section id="out-of-africa-ooa">
+<span id="sec-data-simulated-ooa"></span><h3>Out of Africa (ooa)<a class="headerlink" href="#out-of-africa-ooa" title="Permalink to this headline">#</a></h3>
 <p>The out of Africa dataset is based on the
 <span id="id1">[<a class="reference internal" href="references.html#id3" title="Ryan N. Gutenkunst, Ryan D. Hernandez, Scott H. Williamson, and Carlos D. Bustamante. Inferring the joint demographic history of multiple populations from multidimensional SNP frequency data. PLoS genetics, 5(10):e1000695, October 2009. doi:10.1371/journal.pgen.1000695.">Gutenkunst <em>et al.</em>, 2009</a>]</span> demographic model
-(see also <a class="reference external" href="https://tskit.dev/msprime/docs/stable/demography.html#population-tree">msprime out of Africa
-example</a>
+(<a class="reference internal" href="#fig-ooa-demesdraw"><span class="std std-numref">Fig. 1</span></a>; see also
+example](https://tskit.dev/msprime/docs/stable/demography.html#population-tree)
 and <a class="reference external" href="https://popsim-consortium.github.io/stdpopsim-docs/stable/catalog.html#sec_catalog_homsap_models_outofafrica_3g09">the stdpopsim out of Africa model
-specification</a>)</p>
-</section>
-<section id="out-of-africa-with-outgroups-ooa-outgroups">
-<h3>Out of Africa with outgroups (ooa-outgroups)<a class="headerlink" href="#out-of-africa-with-outgroups-ooa-outgroups" title="Permalink to this headline">#</a></h3>
-<p>The out of Africa with outgroups is an extension of the
-In addition to simulating human data, the model has been expanded to
-include three outgroups chimpanzee, gorilla and orangutan (Figure
-<a class="reference internal" href="#fig-ooa-demesdraw"><span class="std std-numref">Fig. 1</span></a>).</p>
+specification</a>).</p>
 <div class="cell tag_remove-output tag_hide-input docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">myst_nb</span> <span class="kn">import</span> <span class="n">glue</span>
 <span class="kn">import</span> <span class="nn">demes</span>
 <span class="kn">import</span> <span class="nn">demesdraw</span>
-<span class="n">ooa</span> <span class="o">=</span> <span class="n">demes</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data/ooa-outgroups/ooa_with_outgroups.demes.yaml&quot;</span><span class="p">)</span>
-<span class="n">ax</span> <span class="o">=</span> <span class="n">demesdraw</span><span class="o">.</span><span class="n">tubes</span><span class="p">(</span><span class="n">ooa</span><span class="p">,</span> <span class="n">num_lines_per_migration</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">log_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">ooa</span> <span class="o">=</span> <span class="n">demes</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data/ooa/ooa.demes.yaml&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">demesdraw</span><span class="o">.</span><span class="n">tubes</span><span class="p">(</span><span class="n">ooa</span><span class="p">,</span> <span class="n">num_lines_per_migration</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
 <span class="n">glue</span><span class="p">(</span><span class="s2">&quot;fig-ooa-demesdraw&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -565,6 +622,33 @@ include three outgroups chimpanzee, gorilla and orangutan (Figure
 </div>
 <figcaption>
 <p><span class="caption-number">Fig. 1 </span><span class="caption-text"><a class="reference external" href="https://grahamgower.github.io/demesdraw/latest/quickstart.html">demesdraw</a> illustration of out of Africa model.</span><a class="headerlink" href="#fig-ooa-demesdraw" title="Permalink to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="out-of-africa-with-outgroups-ooa-outgroups">
+<h3>Out of Africa with outgroups (ooa-outgroups)<a class="headerlink" href="#out-of-africa-with-outgroups-ooa-outgroups" title="Permalink to this headline">#</a></h3>
+<p>The out of Africa with outgroups is an extension of the previous data
+set (<a class="reference internal" href="#fig-ooa-with-outgroups-demesdraw"><span class="std std-numref">Fig. 2</span></a>). In addition to
+simulating human data, the model has been expanded to include three
+outgroups chimpanzee, gorilla and orangutan</p>
+<div class="cell tag_remove-output tag_hide-input docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">myst_nb</span> <span class="kn">import</span> <span class="n">glue</span>
+<span class="kn">import</span> <span class="nn">demes</span>
+<span class="kn">import</span> <span class="nn">demesdraw</span>
+<span class="n">ooa</span> <span class="o">=</span> <span class="n">demes</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">&quot;data/ooa-outgroups/ooa_with_outgroups.demes.yaml&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">demesdraw</span><span class="o">.</span><span class="n">tubes</span><span class="p">(</span><span class="n">ooa</span><span class="p">,</span> <span class="n">num_lines_per_migration</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">log_time</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span>
+<span class="n">glue</span><span class="p">(</span><span class="s2">&quot;fig-ooa-with-outgroups-demesdraw&quot;</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">display</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<figure class="align-default" id="fig-ooa-with-outgroups-demesdraw">
+<div class="cell_output docutils container">
+<img alt="_images/data_3_0.png" src="_images/data_3_0.png" />
+</div>
+<figcaption>
+<p><span class="caption-number">Fig. 2 </span><span class="caption-text"><a class="reference external" href="https://grahamgower.github.io/demesdraw/latest/quickstart.html">demesdraw</a> illustration of out of Africa model, including outgroups chimpanzee, gorilla, and orangutan. Note that the time scale is in log units.</span><a class="headerlink" href="#fig-ooa-with-outgroups-demesdraw" title="Permalink to this image">#</a></p>
 </figcaption>
 </figure>
 </section>

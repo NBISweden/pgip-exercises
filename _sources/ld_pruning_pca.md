@@ -13,7 +13,9 @@ kernelspec:
 
 
 ```{code-cell} pgip
+:"tags": ["hide-output"]
 from bokeh.plotting import figure, show, output_notebook
+from pgip import utils
 output_notebook()
 ```
 
@@ -25,7 +27,7 @@ output_notebook()
 
 (sec_ld_pruning_pca)=
 
-# Ld pruning and principal component analysis
+# Principal component analysis
 
 Variant data is high-dimensional and some sort of dimensionality
 reduction is often employed to provide a condensed overview of the
@@ -36,19 +38,16 @@ applied to genetic variation data (e.g.
 
 For large data sets, it is common practice to first prune the data to
 remove correlation between data points. In this exercise, you will
-prune the data using either `plink` or `sgkit` code snippets.
+prune the data using either [plink](sec_pca_with_plink) or
+[sgkit](sec_pca_with_sgkit) code snippets.
 
 ## Data preparation
 
 ```{admonition} FIXME
 :class: warning
-sgkit is likely too cumbersome to explain to include. Keep as reference, use EIGENSOFT or plink for pruning and pca.
+sgkit is likely too cumbersome? Keep as reference for now, use EIGENSOFT or plink for pruning and pca.
 
 ```
-
-Before pruning the data, we make a plot of the LD structure. We will
-use `python` for plotting and first load the necessary libraries:
-
 
 ```{code-cell} pgip
 import os
@@ -78,6 +77,9 @@ glue("nvar", len(ds.variants))
 
 
 ## Linkage disequilibrium structure
+
+Before pruning the data, we make a plot of the LD structure. We will
+use `python` for plotting and first load the necessary libraries:
 
 ## Linkage disequilibrium pruning
 
@@ -115,26 +117,6 @@ ds = ds.chunk(original_chunk_size)
 
 Now we can perform pca.
 
-
-```{code-cell} pgip
-from bokeh.palettes import Set3
-from bokeh.plotting import figure
-
-
-def _get_palette(cmap=Set3[12], n=12, start=0, end=1):
-    import matplotlib
-    import numpy as np
-
-    linspace = np.linspace(start, end, n)
-    cmap = matplotlib.colors.LinearSegmentedColormap.from_list("customcmap", cmap)
-    palette = cmap(linspace)
-    hex_palette = [matplotlib.colors.rgb2hex(c) for c in palette]
-    return hex_palette
-
-```
-
-
-
 ```{code-cell} pgip
 # Transform genotype call into number of non-reference alleles
 ds_pca = sg.stats.pca.count_call_alternate_alleles(ds)
@@ -150,7 +132,9 @@ ds_pca["call_alternate_allele_count"] = ds_pca.call_alternate_allele_count.chunk
 ds_pca = sg.pca(ds_pca, n_components=10)
 ```
 
-and plot the first two components
+
+We convert the data structure to a pandas dataframe and add various
+metadata, such as sample and population names.
 
 ```{code-cell} pgip
 explained = ds_pca.sample_pca_explained_variance_ratio.values * 100
@@ -164,73 +148,25 @@ df.columns = [f"PC{i+1}" for _, i in df.columns]
 df.reset_index(inplace=True)
 df["sample"] = ds_pca.sample_id[df["sample"].values].values
 df["population"] = df["sample"].str.slice(0, 3)
-colors = dict(zip(set(df["population"]), _get_palette(n=3)))
+colors = dict(zip(set(df["population"]), utils._get_palette(n=3)))
 df["color"] = [colors[x] for x in df["population"]]
 ```
 
+For the purpose of this exercise, we want to also investigate the
+effect of sequencing coverage.
 
-using specialized functions
 ```{code-cell} pgip
-# NB: https://speciationgenomics.github.io/pca/ calculates explained
-# variance from sums of plink eigenvals, although not all components
-# have been calculated
-import re
-from bokeh.io import output_file
-from bokeh.layouts import gridplot
-
-from bokeh.models import ColumnDataSource
-import itertools
-import math
-
-def bokeh_plot_pca_coords(df, explained, *, pc1=1, pc2=2, **kw):
-    source = ColumnDataSource(df)
-    x = explained[pc1 - 1]
-    y = explained[pc2 - 1]
-    xlab = f"PC{pc1} ({x:.1f}%)"
-    ylab = f"PC{pc2} ({y:.1f}%)"
-
-    metadata_columns = [x for x in df.columns if not re.match("^(PC[0-9]+|color)$", x)]
-    tooltips = [(x, f"@{x}") for x in metadata_columns]
-    p = figure(
-        x_axis_label=xlab,
-        y_axis_label=ylab,
-        tooltips=tooltips,
-        title=f"PC{pc1} vs PC{pc2}",
-        **kw,
-    )
-    p.circle(
-        x=f"PC{pc1}",
-        y=f"PC{pc2}",
-        source=source,
-        color="color",
-        size=15,
-        alpha=0.8,
-        line_color="black",
-        legend_group="population",
-    )
-    p.add_layout(p.legend[0], "right")
-    return p
-
-
-def bokeh_plot_pca(df, eigenvals, ncomp=6, filename=None, **kw):
-    pairs = list(itertools.combinations(range(ncomp), 2))
-    n = len(pairs)
-    ncols = math.floor(math.sqrt(n))
-    plots = []
-    for (i, j) in pairs:
-        p = bokeh_plot_pca_coords(df, eigenvals, pc1=i + 1, pc2=j + 1, **kw)
-        plots.append(p)
-    gp = gridplot(plots, ncols=ncols)
-    if filename is not None:
-        output_file(filename)
-        show(gp)
-    else:
-        return gp
-
+import io
+import pandas as pd
+import subprocess
+output = subprocess.check_output("samtools depth -a data/ooa/*.bam", shell=True)
+coverage = pd.read_table(io.StringIO(output.decode()), header=None).mean(axis=0)
+df["coverage"] = coverage[1:]
 ```
 
-
+Finally, we can plot the pca with bokeh.
 ```{code-cell} pgip
-p = bokeh_plot_pca(df, explained)
+from pgip.plotting import bokeh_plot_pca
+p = bokeh_plot_pca(df, explained, ncomp=3, ncols=2, width=400, height=400)
 show(p)
 ```

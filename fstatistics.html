@@ -163,7 +163,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Day 3: Describing variation
+  Day 3: Describing variation and population structure
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -172,10 +172,27 @@ const thebe_selector_output = ".output, .cell_output"
    Describing variation
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="ld_pruning_pca.html">
-   Ld pruning and principal component analysis
+   Principal component analysis
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/sgkit.html">
+     PCA with sgkit
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/plink.html">
+     PCA with plink
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="admixture.html">
@@ -497,22 +514,22 @@ title="Print to PDF"
 <section class="tex2jax_ignore mathjax_ignore" id="exercises">
 <h1>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h1>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="2e20b910-36b5-4168-9cd9-f7a60847c66e" name="26cfa401-a0ef-4f82-af30-c39d8bd592e2" type="radio">
-</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="2e20b910-36b5-4168-9cd9-f7a60847c66e">
+<input checked="checked" id="ce75d0cd-9ed3-4048-98f0-4efa8a435672" name="854ddeaf-cea7-42cd-b458-e2d5d8ff4739" type="radio">
+</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="ce75d0cd-9ed3-4048-98f0-4efa8a435672">
 SHELL</label><div class="sd-tab-content docutils">
 <div class="highlight-shell notranslate" id="dsuite"><div class="highlight"><pre><span></span><span class="nb">pwd</span>
 </pre></div>
 </div>
 </div>
-<input id="db6ed470-c40b-4eec-a6c1-d5a2cba93d06" name="26cfa401-a0ef-4f82-af30-c39d8bd592e2" type="radio">
-</input><label class="sd-tab-label" data-sync-id="tabcode-ipython3" for="db6ed470-c40b-4eec-a6c1-d5a2cba93d06">
+<input id="2c4c1f27-f57d-4c6d-8a0a-0ce424771adc" name="854ddeaf-cea7-42cd-b458-e2d5d8ff4739" type="radio">
+</input><label class="sd-tab-label" data-sync-id="tabcode-ipython3" for="2c4c1f27-f57d-4c6d-8a0a-0ce424771adc">
 IPYTHON3</label><div class="sd-tab-content docutils">
 <div class="highlight-ipython3 notranslate" id="sgkit"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sgkit</span>
 </pre></div>
 </div>
 </div>
-<input id="87efdd47-1627-47f2-ae7f-ed750d205f50" name="26cfa401-a0ef-4f82-af30-c39d8bd592e2" type="radio">
-</input><label class="sd-tab-label" data-sync-id="tabcode-ipython3" for="87efdd47-1627-47f2-ae7f-ed750d205f50">
+<input id="4cf97db1-53ee-4b39-a792-6d5b88b1f27d" name="854ddeaf-cea7-42cd-b458-e2d5d8ff4739" type="radio">
+</input><label class="sd-tab-label" data-sync-id="tabcode-ipython3" for="4cf97db1-53ee-4b39-a792-6d5b88b1f27d">
 IPYTHON3</label><div class="sd-tab-content docutils">
 <div class="highlight-ipython3 notranslate" id="msprime"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">msprime</span>
 </pre></div>

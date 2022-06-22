@@ -163,7 +163,7 @@ const thebe_selector_output = ".output, .cell_output"
 </ul>
 <p aria-level="2" class="caption" role="heading">
  <span class="caption-text">
-  Day 3: Describing variation
+  Day 3: Describing variation and population structure
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -172,10 +172,27 @@ const thebe_selector_output = ".output, .cell_output"
    Describing variation
   </a>
  </li>
- <li class="toctree-l1">
+ <li class="toctree-l1 has-children">
   <a class="reference internal" href="ld_pruning_pca.html">
-   Ld pruning and principal component analysis
+   Principal component analysis
   </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/sgkit.html">
+     PCA with sgkit
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="pca/plink.html">
+     PCA with plink
+    </a>
+   </li>
+  </ul>
  </li>
  <li class="toctree-l1">
   <a class="reference internal" href="admixture.html">
@@ -532,15 +549,15 @@ organisms (e.g. chromosome numbers in GATK)</p></li>
 <section id="variant-calling-exercise">
 <h2>Variant calling exercise<a class="headerlink" href="#variant-calling-exercise" title="Permalink to this headline">#</a></h2>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="d0e88d11-67aa-4411-a1e7-0d8aaf9dc694" name="e12527d7-7d6f-417a-bbf4-21c8c945f641" type="radio">
-</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="d0e88d11-67aa-4411-a1e7-0d8aaf9dc694">
+<input checked="checked" id="dee939f7-0711-44be-8a8c-47d005f92e50" name="27003a0e-b826-4137-ae59-2d6e75c86535" type="radio">
+</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="dee939f7-0711-44be-8a8c-47d005f92e50">
 SHELL</label><div class="sd-tab-content docutils">
 <div class="highlight-shell notranslate" id="bcftools"><div class="highlight"><pre><span></span>bcftools <span class="p">|</span> head -2
 </pre></div>
 </div>
 </div>
-<input id="c8bb1285-78dd-40e6-b6b0-9e3bbad1bfe2" name="e12527d7-7d6f-417a-bbf4-21c8c945f641" type="radio">
-</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="c8bb1285-78dd-40e6-b6b0-9e3bbad1bfe2">
+<input id="e3d069dd-ee7d-4e70-bc3a-b3df077fb426" name="27003a0e-b826-4137-ae59-2d6e75c86535" type="radio">
+</input><label class="sd-tab-label" data-sync-id="tabcode-shell" for="e3d069dd-ee7d-4e70-bc3a-b3df077fb426">
 SHELL</label><div class="sd-tab-content docutils">
 <div class="highlight-shell notranslate" id="gatk"><div class="highlight"><pre><span></span>gatk HaplotypeCaller
 </pre></div>

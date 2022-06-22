@@ -1,4 +1,7 @@
 make_test_data.py
 ooa
 ooa-outgroups
+pyproject.toml
 requirements.txt
+tests
+utils
