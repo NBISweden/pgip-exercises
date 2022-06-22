@@ -13,6 +13,7 @@ kernelspec:
 
 
 ```{code-cell} pgip
+:"tags": ["remove-output"]
 from bokeh.plotting import figure, show, output_notebook
 output_notebook()
 ```
@@ -25,7 +26,7 @@ output_notebook()
 
 (sec_ld_pruning_pca)=
 
-# Ld pruning and principal component analysis
+# Principal component analysis
 
 Variant data is high-dimensional and some sort of dimensionality
 reduction is often employed to provide a condensed overview of the
@@ -45,10 +46,6 @@ prune the data using either `plink` or `sgkit` code snippets.
 sgkit is likely too cumbersome to explain to include. Keep as reference, use EIGENSOFT or plink for pruning and pca.
 
 ```
-
-Before pruning the data, we make a plot of the LD structure. We will
-use `python` for plotting and first load the necessary libraries:
-
 
 ```{code-cell} pgip
 import os
@@ -78,6 +75,9 @@ glue("nvar", len(ds.variants))
 
 
 ## Linkage disequilibrium structure
+
+Before pruning the data, we make a plot of the LD structure. We will
+use `python` for plotting and first load the necessary libraries:
 
 ## Linkage disequilibrium pruning
 
@@ -215,7 +215,7 @@ def bokeh_plot_pca_coords(df, explained, *, pc1=1, pc2=2, **kw):
 def bokeh_plot_pca(df, eigenvals, ncomp=6, filename=None, **kw):
     pairs = list(itertools.combinations(range(ncomp), 2))
     n = len(pairs)
-    ncols = math.floor(math.sqrt(n))
+    ncols = kw.pop("ncols", math.floor(math.sqrt(n)))
     plots = []
     for (i, j) in pairs:
         p = bokeh_plot_pca_coords(df, eigenvals, pc1=i + 1, pc2=j + 1, **kw)
@@ -231,6 +231,6 @@ def bokeh_plot_pca(df, eigenvals, ncomp=6, filename=None, **kw):
 
 
 ```{code-cell} pgip
-p = bokeh_plot_pca(df, explained)
+p = bokeh_plot_pca(df, explained, ncomp=3, ncols=2, width=400, height=400)
 show(p)
 ```

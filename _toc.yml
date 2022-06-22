@@ -27,10 +27,13 @@ parts:
   - file: variantcalling
   - file: variantfiltering
   - file: genotype_likelihoods
-- caption: "Day 3: Describing variation"
+- caption: "Day 3: Describing variation and population structure"
   chapters:
   - file: describing_variation
   - file: ld_pruning_pca
+    sections:
+      - file: pca/sgkit
+      - file: pca/plink
   - file: admixture
 - caption: "Day 4: Demographic inference"
   chapters:
